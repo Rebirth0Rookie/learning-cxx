@@ -6,7 +6,7 @@ struct Fibonacci {
 
     // TODO: 实现正确的缓存优化斐波那契计算
     unsigned long long get(int i) {
-        for (; false; ++cached) {
+        for (; cached<128; ++cached) {
             cache[cached] = cache[cached - 1] + cache[cached - 2];
         }
         return cache[i];
@@ -15,7 +15,8 @@ struct Fibonacci {
 
 int main(int argc, char **argv) {
     // TODO: 初始化缓存结构体，使计算正确
-    Fibonacci fib;
+    Fibonacci fib{{0, 1}, 2};//定义的时候才能用花括号初始化，定义后只能一个个赋值初始化
+    //std::array<unsigned long long, 128> cache;才能支持花括号整体赋值
     ASSERT(fib.get(10) == 55, "fibonacci(10) should be 55");
     std::cout << "fibonacci(10) = " << fib.get(10) << std::endl;
     return 0;

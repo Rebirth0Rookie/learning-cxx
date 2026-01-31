@@ -15,21 +15,40 @@ class DynFibonacci {
 
 public:
     // TODO: 实现动态设置容量的构造器
-    DynFibonacci(int capacity): cache(new ?), cached(?) {}
+    DynFibonacci(int capacity): cache(new size_t[capacity]), cached(2) {
+        cache[0] = 0;
+        cache[1] = 1;
+    }
 
     // TODO: 实现移动构造器
-    DynFibonacci(DynFibonacci &&) noexcept = delete;
+    DynFibonacci(DynFibonacci&& other) noexcept : cache(other.cache), cached(other.cached) {
+        other.cache  = nullptr;  // 被移动的对象变成“空壳”
+        other.cached = 0;
+    }
 
     // TODO: 实现移动赋值
     // NOTICE: ⚠ 注意移动到自身问题 ⚠
-    DynFibonacci &operator=(DynFibonacci &&) noexcept = delete;
+    DynFibonacci& operator=(DynFibonacci&& other) noexcept {
+        if (this == &other) {
+            return *this;
+        }
+        delete[] cache;
+        cache  = other.cache;
+        cached = other.cached;
+        other.cache  = nullptr;
+        other.cached = 0;
+        return *this;
+    }
 
     // TODO: 实现析构器，释放缓存空间
-    ~DynFibonacci();
+    ~DynFibonacci()
+    {
+        delete[] cache;
+    }
 
     // TODO: 实现正确的缓存优化斐波那契计算
     size_t operator[](int i) {
-        for (; false; ++cached) {
+        for (; cached <= i; ++cached) {
             cache[cached] = cache[cached - 1] + cache[cached - 2];
         }
         return cache[i];
@@ -64,3 +83,10 @@ int main(int argc, char **argv) {
 
     return 0;
 }
+
+/*
+noexpect是一个异常说明符，表示这个移动构造函数不会抛出异常
+func()=delete;表示这个函数被禁用了，被禁用的函数不能被实现
+移动构造后，被move的对象本身还在，只是资源被搬走了，须保证它仍然是“可析构的”（析构不会出错）；但内部资源（比如指针指向的内存）通常已经被置空或重置
+移动赋值本质上是对一个已经存在的对象，把另一个临时或者即将废弃的对象里的资源搬过来，然后将对方掏空
+*/

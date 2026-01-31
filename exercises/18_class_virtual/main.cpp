@@ -42,41 +42,52 @@ int main(int argc, char **argv) {
     C c;
     D d;
 
-    ASSERT(a.virtual_name() == '?', MSG);
-    ASSERT(b.virtual_name() == '?', MSG);
-    ASSERT(c.virtual_name() == '?', MSG);
-    ASSERT(d.virtual_name() == '?', MSG);
-    ASSERT(a.direct_name() == '?', MSG);
-    ASSERT(b.direct_name() == '?', MSG);
-    ASSERT(c.direct_name() == '?', MSG);
-    ASSERT(d.direct_name() == '?', MSG);
+    ASSERT(a.virtual_name() == 'A', MSG);
+    ASSERT(b.virtual_name() == 'B', MSG);
+    ASSERT(c.virtual_name() == 'C', MSG);
+    ASSERT(d.virtual_name() == 'C', MSG);
+    ASSERT(a.direct_name() == 'A', MSG);
+    ASSERT(b.direct_name() == 'B', MSG);
+    ASSERT(c.direct_name() == 'C', MSG);
+    ASSERT(d.direct_name() == 'D', MSG);
 
     A &rab = b;
     B &rbc = c;
     C &rcd = d;
 
-    ASSERT(rab.virtual_name() == '?', MSG);
-    ASSERT(rbc.virtual_name() == '?', MSG);
-    ASSERT(rcd.virtual_name() == '?', MSG);
-    ASSERT(rab.direct_name() == '?', MSG);
-    ASSERT(rbc.direct_name() == '?', MSG);
-    ASSERT(rcd.direct_name() == '?', MSG);
+    ASSERT(rab.virtual_name() == 'B', MSG);
+    ASSERT(rbc.virtual_name() == 'C', MSG);
+    ASSERT(rcd.virtual_name() == 'C', MSG);
+    ASSERT(rab.direct_name() == 'A', MSG);
+    ASSERT(rbc.direct_name() == 'B', MSG);
+    ASSERT(rcd.direct_name() == 'C', MSG);
 
     A &rac = c;
     B &rbd = d;
 
-    ASSERT(rac.virtual_name() == '?', MSG);
-    ASSERT(rbd.virtual_name() == '?', MSG);
-    ASSERT(rac.direct_name() == '?', MSG);
-    ASSERT(rbd.direct_name() == '?', MSG);
+    ASSERT(rac.virtual_name() == 'C', MSG);
+    ASSERT(rbd.virtual_name() == 'C', MSG);
+    ASSERT(rac.direct_name() == 'A', MSG);
+    ASSERT(rbd.direct_name() == 'B', MSG);
 
     A &rad = d;
 
-    ASSERT(rad.virtual_name() == '?', MSG);
-    ASSERT(rad.direct_name() == '?', MSG);
+    ASSERT(rad.virtual_name() == 'C', MSG);
+    ASSERT(rad.direct_name() == 'A', MSG);
 
     return 0;
 }
 
 // READ: 扩展阅读-纯虚、抽象 <https://zh.cppreference.com/w/cpp/language/abstract_class>
 // READ: 扩展阅读-虚继承 <https://zh.cppreference.com/w/cpp/language/derived_class>
+
+/*
+虚函数是用来实现 “多态（polymorphism）” 的成员函数，通过基类指针/引用调用虚函数时，实际运行的是“对象真实类型”的那个版本，而不是“指针/引用类型”的那个版本
+虚函数前面会加上virtual关键字
+
+先确定「引用/指针 → 静态类型」和「它绑定的对象 → 动态类型」。
+遇到虚函数：用动态类型往继承链里找最后一个重写。
+遇到非虚函数：只按静态类型往上找成员函数实现
+override表示要重写该虚函数
+final表示不能再重写这个虚函数，用于类的话则表示不能再被继承
+*/

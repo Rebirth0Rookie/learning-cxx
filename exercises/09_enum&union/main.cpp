@@ -37,7 +37,10 @@ ColorEnum convert_by_pun(Color c) {
 
     TypePun pun;
     // TODO: 补全类型双关转换
-
+    //类型双关转换指的是把Color c写进union的c成员，然后从union的e成员把值读回来
+    //e和c在union中占用同一块内存空间，pun.c = c把这块内存按照Color的格式写进去，pun.e用ColorEnum的视角去读这块内存
+    //其实就是对同一内存地址的数据比特，用不同的类型视角去读
+    pun.c = c;
     return pun.e;
 }
 

@@ -4,12 +4,15 @@
 
 template<class T>
 struct Tensor4D {
-    unsigned int shape[4];
-    T *data;
+    unsigned int shape[4]; // 存储四个维度的大小
+    T *data; // 存储连续数据
 
     Tensor4D(unsigned int const shape_[4], T const *data_) {
         unsigned int size = 1;
-        // TODO: 填入正确的 shape 并计算 size
+        for (auto i = 0u; i < 4u; ++i) {
+            shape[i] = shape_[i]; // 为每个维度分配形状
+            size *= shape_[i]; // siize用连乘的方式计算，1 * N0 * N1 * N2 * N3
+        }
         data = new T[size];
         std::memcpy(data, data_, size * sizeof(T));
     }
@@ -27,7 +30,24 @@ struct Tensor4D {
     // 例如，`this` 形状为 `[1, 2, 3, 4]`，`others` 形状为 `[1, 2, 1, 4]`，
     // 则 `this` 与 `others` 相加时，3 个形状为 `[1, 2, 1, 4]` 的子张量各自与 `others` 对应项相加。
     Tensor4D &operator+=(Tensor4D const &others) {
-        // TODO: 实现单向广播的加法
+        for (auto i0 = 0u; i0 < shape[0]; ++i0) {
+            for (auto i1 = 0u; i1 < shape[1]; ++i1) {
+                for (auto i2 = 0u; i2 < shape[2]; ++i2) {
+                    for (auto i3 = 0u; i3 < shape[3]; ++i3) {
+                        auto idx_this = ((i0 * shape[1] + i1) * shape[2] + i2) * shape[3] + i3;
+
+                        auto j0 = (others.shape[0] == 1 ? 0u : i0);
+                        auto j1 = (others.shape[1] == 1 ? 0u : i1);
+                        auto j2 = (others.shape[2] == 1 ? 0u : i2);
+                        auto j3 = (others.shape[3] == 1 ? 0u : i3);
+
+                        auto idx_other = ((j0 * others.shape[1] + j1) * others.shape[2] + j2) * others.shape[3] + j3;
+
+                        data[idx_this] += others.data[idx_other];
+                    }
+                }
+            }
+        }
         return *this;
     }
 };

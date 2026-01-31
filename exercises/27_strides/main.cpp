@@ -1,5 +1,6 @@
 ﻿#include "../exercise.h"
 #include <vector>
+#include <stack>
 
 // 张量即多维数组。连续存储张量即逻辑结构与存储结构一致的张量。
 // 通常来说，形状为 [d0, d1, ..., dn] 的张量，第 n 维是 dn 个连续的元素，第 n-1 维是 dn-1 个连续的 dn 个元素，以此类推。
@@ -18,6 +19,32 @@ std::vector<udim> strides(std::vector<udim> const &shape) {
     // TODO: 完成函数体，根据张量形状计算张量连续存储时的步长。
     // READ: 逆向迭代器 std::vector::rbegin <https://zh.cppreference.com/w/cpp/container/vector/rbegin>
     //       使用逆向迭代器可能可以简化代码
+    /*
+    逆向迭代器的用法:
+    for (auto it = shape.rbegin(); it != shape.rend(); ++it) {
+        // *it 即为当前维度的大小
+    }
+    shapes.rbegin() 返回指向最后一个元素的迭代器
+    shapes.rend() 返回指向第一个元素之前的迭代器
+    通过 it - shape.rbegin() 可以计算当前维度是第几个维度
+    例如 shape = {2, 3, 4}
+    当 it 指向 4 时，it - shape.rbegin() == 0
+    当 it 指向 3 时，it - shape.rbegin() == 1
+    当 it 指向 2 时，it - shape.rbegin() == 2
+    通过这个值可以索引 strides 数组，设置对应维度的步长
+    计算步长时，可以维护一个变量 stride，初始值为 1
+    每次迭代时，将当前维度的步长设置为 stride，然后将 stride 乘以当前维度的大小，作为下一个维度的步长基础
+    */
+    udim stride = 1;
+    std::stack<udim> temp_stack;
+    for (auto it = shape.rbegin(); it != shape.rend(); ++it) {
+        temp_stack.push(stride);
+        stride *= *it;
+    }
+    while (!temp_stack.empty()) {
+        strides[strides.size() - 1 - (temp_stack.size() - 1)] = temp_stack.top();
+        temp_stack.pop();
+    }
     return strides;
 }
 

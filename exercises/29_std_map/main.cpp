@@ -3,15 +3,20 @@
 
 // READ: `std::map` <https://zh.cppreference.com/w/cpp/container/map>
 // READ: `std::unordered_map` <https://zh.cppreference.com/w/cpp/container/unordered_map>
-
+/*
+std::map 是一种关联容器，存储键值对（key-value pairs），其中每个键都是唯一的，并且按照键的顺序进行排序。
+它基于红黑树实现，提供对元素的对数时间复杂度的插入、删除和查找操作。
+*/
 template<class k, class v>
 bool key_exists(std::map<k, v> const &map, k const &key) {
     // TODO: 实现函数
+    return map.find(key) != map.end();
 }
 
 template<class k, class v>
 void set(std::map<k, v> &map, k key, v value) {
     // TODO: 实现函数
+    map[key] = value;
 }
 
 // ---- 不要修改以下代码 ----
